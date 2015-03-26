@@ -16,6 +16,7 @@
     "babel-loader": "~4.0.0",
     "immutable": "~3.6.2",
     "gulp-mocha": "~2.0.0",
-    "expect.js": "~0.3.1"
+    "expect.js": "~0.3.1",
+    "babel": "~4.7.16"
   }
 }
