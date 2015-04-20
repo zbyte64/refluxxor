@@ -1,42 +1,50 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
 //CONSIDER: actions are functions that happen to emit an event when called
 
 exports.createAction = createAction;
 exports.createActionSpace = createActionSpace;
 
-var _ = _interopRequire(require("lodash"));
+var _import = require('lodash');
 
-var Kefir = _interopRequire(require("kefir"));
+var _import2 = _interopRequireWildcard(_import);
+
+var _Kefir = require('kefir');
+
+var _Kefir2 = _interopRequireWildcard(_Kefir);
 
 function createAction(f) {
   //converts a function to an action
-  if (!_.isFunction(f)) f = _.constant(f);
+  if (!_import2['default'].isFunction(f)) f = _import2['default'].constant(f);
   var eventer = (function (_eventer) {
-    var _eventerWrapper = function eventer() {
+    function eventer() {
       return _eventer.apply(this, arguments);
-    };
+    }
 
-    _eventerWrapper.toString = function () {
+    eventer.toString = function () {
       return _eventer.toString();
     };
 
-    return _eventerWrapper;
+    return eventer;
   })(function () {
-    return eventer.trigger.apply(eventer.__proto__, _.toArray(arguments));
+    return eventer.trigger.apply(eventer.__proto__, _import2['default'].toArray(arguments));
   });
   //This scares me...
-  eventer.__proto__ = _.clone(eventer.__proto__);
-  var methods = _.reduce(ActionMethods, function (col, func, key) {
+  eventer.__proto__ = _import2['default'].clone(eventer.__proto__);
+  var methods = _import2['default'].reduce(ActionMethods, function (col, func, key) {
     col[key] = func.bind(eventer.__proto__);
     return col;
   }, {});
-  _.extend(eventer.__proto__, methods, {
+  _import2['default'].extend(eventer.__proto__, methods, {
     fire: f,
     //how did we loose apply? need to wrap these functions properly
-    apply: function (self, args) {
+    apply: function apply(self, args) {
       return this.trigger.apply(self, args);
     }
   });
@@ -62,12 +70,12 @@ var ActionMethods = {
   },
   subscribe: function subscribe(callback) {
     this.emitter.onValue(callback);
-    return _.bind(this.emitter.offValue, this.emitter, callback);
+    return _import2['default'].bind(this.emitter.offValue, this.emitter, callback);
   },
   mount: function mount(flux) {
     //mount the action to flux
     //CONSIDER: are we a clone?
-    this.emitter = Kefir.emitter();
+    this.emitter = _Kefir2['default'].emitter();
     this.flux = flux;
     this.actionDidMount();
     return this;
@@ -85,51 +93,47 @@ function createActionSpace(methods) {
   var self = {
     mount: function mount(flux) {
       self.flux = flux;
-      _.each(actionables, function (x) {
+      _import2['default'].each(actionables, function (x) {
         return x.mount(flux);
       });
       return self;
     },
     unmount: function unmount() {
       self.flux = null;
-      _.each(actionables, function (x) {
+      _import2['default'].each(actionables, function (x) {
         return x.unmount();
       });
     }
   };
   //console.log("make actionables from:", methods);
-  var actionables = _.reduce(methods, function (col, f, name) {
-    if (_.isFunction(f)) {
+  var actionables = _import2['default'].reduce(methods, function (col, f, name) {
+    if (_import2['default'].isFunction(f)) {
       var bf = f.bind(self);
       //console.log("function actionable", name, bf);
       col[name] = createAction(bf);
       if (col[name].fire !== bf) {
-        console.log("fooobar, fire was not set properly!", bf, col[name].fire);
+        console.log('fooobar, fire was not set properly!', bf, col[name].fire);
       }
     } else if (f === null) {
       //console.log("null actionable", name)
       col[name] = createAction();
-    } else if (_.isObject(f)) {
+    } else if (_import2['default'].isObject(f)) {
       //console.log("namspace actionable", name)
       col[name] = createActionSpace(f);
-    } else if (_.isArray(f)) {
+    } else if (_import2['default'].isArray(f)) {
       //console.log("list of actionables", name)
-      col[name] = _.reduce(f, function (col, name) {
+      col[name] = _import2['default'].reduce(f, function (col, name) {
         col[name] = createAction();
         return col;
       }, {});
-    } else if (_.isString(f) && _.isArray(methods)) {
+    } else if (_import2['default'].isString(f) && _import2['default'].isArray(methods)) {
       //console.log("list of actionables(2)", f)
       col[f] = createAction();
     } else {
-      throw new Error("Unrecognized action type (must be function or plain object or array):", f);
+      throw new Error('Unrecognized action type (must be function or plain object or array):', f);
     }
     return col;
   }, {});
-  _.assign(self, actionables);
+  _import2['default'].assign(self, actionables);
   return self;
 }
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});

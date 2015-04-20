@@ -4,14 +4,12 @@ var mocha = require('gulp-mocha');
 
 gulp.task('build', function() {
   gulp.src('src/**/*.js')
-    .pipe(to5({playground: true}))
+    .pipe(to5())
     .pipe(gulp.dest('dist'))
 });
 
 gulp.task('test', function() {
-  require("babel/register")({
-    experimental: true
-  });
+  require("babel/register")();
 
   gulp.src('tests/**/*test.js')
     .pipe(mocha({reporter: 'nyan'}));

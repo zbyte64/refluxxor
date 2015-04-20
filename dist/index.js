@@ -1,13 +1,26 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var actions = _interopRequire(require("./actions"));
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var stores = _interopRequire(require("./stores"));
+var _actions = require('./actions');
 
-var flux = _interopRequire(require("./flux"));
+var _actions2 = _interopRequireWildcard(_actions);
 
-var _ = _interopRequire(require("lodash"));
+var _stores = require('./stores');
 
-module.exports = _.merge({}, flux, store, action);
+var _stores2 = _interopRequireWildcard(_stores);
+
+var _flux = require('./flux');
+
+var _flux2 = _interopRequireWildcard(_flux);
+
+var _import = require('lodash');
+
+var _import2 = _interopRequireWildcard(_import);
+
+exports['default'] = _import2['default'].merge({}, _flux2['default'], store, action);
+module.exports = exports['default'];

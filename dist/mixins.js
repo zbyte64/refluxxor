@@ -1,19 +1,28 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 exports.ConnectTo = ConnectTo;
 
-var _ = _interopRequire(require("lodash"));
+var _import = require('lodash');
 
-var React = _interopRequire(require("react"));
+var _import2 = _interopRequireWildcard(_import);
 
-var Immutable = _interopRequire(require("immutable"));
+var _React = require('react');
 
-var BinderMixin = exports.BinderMixin = {
+var _React2 = _interopRequireWildcard(_React);
+
+var _Immutable = require('immutable');
+
+var _Immutable2 = _interopRequireWildcard(_Immutable);
+
+var BinderMixin = {
   bindTo: function bindTo(bindable, callback) {
     if (!bindable) {
-      throw new Error("Binder cannot bind to null object");
+      throw new Error('Binder cannot bind to null object');
     }
     callback = callback.bind(this);
     if (bindable.subscribe) {
@@ -23,18 +32,18 @@ var BinderMixin = exports.BinderMixin = {
     }
     if (bindable.onValue) {
       bindable.onValue(callback);
-      var unsubscribe = _.bind(bindable.offValue, bindable, callback);
+      var unsubscribe = _import2['default'].bind(bindable.offValue, bindable, callback);
       this.registerBind(unsubscribe);
       return unsubscribe;
     }
-    throw new Error("Binder cannot bind to unbindable object, object must provide subscribe method or be a stream");
+    throw new Error('Binder cannot bind to unbindable object, object must provide subscribe method or be a stream');
   },
   registerBind: function registerBind(sub) {
     if (!this._binds) this._binds = [];
     this._binds.push(sub);
   },
   endBinds: function endBinds() {
-    _.each(this._binds, function (sub) {
+    _import2['default'].each(this._binds, function (sub) {
       sub();
     });
     this._binds = [];
@@ -44,9 +53,10 @@ var BinderMixin = exports.BinderMixin = {
   }
 };
 
-var FluxMixin = exports.FluxMixin = _.merge({
+exports.BinderMixin = BinderMixin;
+var FluxMixin = _import2['default'].merge({
   contextTypes: {
-    flux: React.PropTypes.object.isRequired
+    flux: _React2['default'].PropTypes.object.isRequired
   },
   getFlux: function getFlux() {
     return this.context.flux;
@@ -54,6 +64,8 @@ var FluxMixin = exports.FluxMixin = _.merge({
   getActions: function getActions() {
     return this.getFlux().actions;
   } }, BinderMixin);
+
+exports.FluxMixin = FluxMixin;
 
 function ConnectTo(storeName) {
   /*
@@ -63,18 +75,18 @@ function ConnectTo(storeName) {
   mixins: [ConnectTo({'pages': 'pages'})]
    */
   //CONSIDER: different mixin? support streams?
-  if (_.isObject(storeName)) {
-    return _.merge({
+  if (_import2['default'].isObject(storeName)) {
+    return _import2['default'].merge({
       getBindables: function getBindables(flux) {
-        return _.reduce(storeName, function (col, stateName, name) {
+        return _import2['default'].reduce(storeName, function (col, stateName, name) {
           col[stateName] = flux.stores[name];
           return col;
         }, {});
       },
       getInitialState: function getInitialState() {
         var bindables = this.getBindables(this.getFlux());
-        var state = Immutable.Map();
-        _.each(bindables, function (bindable, stateName) {
+        var state = _Immutable2['default'].Map();
+        _import2['default'].each(bindables, function (bindable, stateName) {
           if (bindable.getState) {
             state = state.set(stateName, bindable.getState());
           }
@@ -85,7 +97,7 @@ function ConnectTo(storeName) {
         var _this = this;
 
         var bindables = this.getBindables(this.getFlux());
-        _.each(bindables, function (bindable, stateName) {
+        _import2['default'].each(bindables, function (bindable, stateName) {
           _this.bindTo(bindable, function (state) {
             var new_state = _this.state.set(stateName, state);
             _this._replaceState(new_state);
@@ -100,9 +112,9 @@ function ConnectTo(storeName) {
     }, FluxMixin);
   }
 
-  return _.merge({
+  return _import2['default'].merge({
     _getBindable: function _getBindable(flux) {
-      if (_.isString(storeName)) {
+      if (_import2['default'].isString(storeName)) {
         return flux.stores[storeName];
       }return this.getBindable(flux);
     },
@@ -123,6 +135,55 @@ function ConnectTo(storeName) {
   }, FluxMixin);
 }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
+/*
+ <FluxComponent sites="sites" loggedIn="user.loggedIn">
+  <SiteList/>
+ </FluxComponent>
+*/
+var FluxComponent = _React2['default'].createClass({
+  displayName: 'FluxComponent',
+
+  mixins: [FluxMixin],
+  getInitialState: function getInitialState() {
+    var _this2 = this;
+
+    var state = {};
+    _import2['default'].each(this.props, function (val, name) {
+      if (name === 'children') return;
+      var storeState = _this2.getFlux().stores[val].getState();
+      if (storeState && _import2['default'].isFunction(storeState.toJS)) {
+        storeState = storeState.toJS();
+      }
+      state[name] = storeState;
+    });
+    return state;
+  },
+  componentDidMount: function componentDidMount() {
+    var _this3 = this;
+
+    _import2['default'].each(this.props, function (val, name) {
+      if (name === 'children') return;
+      _this3.bindTo(_this3.getFlux().stores[val], function (storeState) {
+        if (storeState && _import2['default'].isFunction(storeState.toJS)) {
+          storeState = storeState.toJS();
+        }
+        var state = {};
+        state[name] = storeState;
+        _this3.setState(state);
+      });
+    });
+  },
+  render: function render() {
+    var _this4 = this;
+
+    //clone children with our state as props
+    if (_import2['default'].isArray(this.props.children)) {
+      return _React2['default'].DOM.span({}, _import2['default'].map(this.props.children, function (element) {
+        if (!element) return null;
+        return _React2['default'].cloneElement(element, _this4.state);
+      }));
+    }
+    return _React2['default'].cloneElement(this.props.children, this.state);
+  }
 });
+exports.FluxComponent = FluxComponent;

@@ -1,6 +1,28 @@
 import _ from 'lodash';
 import Kefir from 'kefir';
 
+function stream() {
+  //an emitter that ensures messages are processed in order
+  var emitter = Kefir.emitter();
+  var emit = emitter.emit.bind(emitter);
+  var emitting = false;
+  var pending = [];
+  emitter.emit = function(message) {
+    if (emitting) {
+      pending.push(message);
+    } else {
+      emitting = true;
+      emit(message);
+      var processPending = pending;
+      pending = [];
+      _.each(processPending, x => {
+        emit(x);
+      });
+      emitting = false;
+    }
+  }
+  return emitter;
+}
 
 export class Store {
   //support react like life-cycle methods
@@ -41,6 +63,7 @@ export class Store {
     }
   }
   trigger(message) {
+    //CONSIDER: don't emit until our previous emission is complete, prevents out of order messages
     this.emitter.emit(message);
   }
   subscribe(callback) {
@@ -69,13 +92,11 @@ export class Store {
   }
   mount(flux) {
     //mount the store to flux
-    //CONSIDER: are we a clone?
-    this.emitter = Kefir.emitter();
+    this.emitter = stream();
     this._ourSubscriptions = [];
     this.flux = flux;
     this.state = this.getInitialState();
     this.refs = this.getReferences(flux);
-    this.storeDidMount();
     return this;
   }
   unmount() { //aka close

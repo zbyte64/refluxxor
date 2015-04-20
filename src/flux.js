@@ -21,6 +21,7 @@ export class Flux {
   mount() {
     this.actions.mount(this);
     _.each(this.stores, x => x.mount(this));
+    _.each(this.stores, x => x.storeDidMount ? x.storeDidMount() : null );
   }
   unmount() {
     this.actions.unmount();

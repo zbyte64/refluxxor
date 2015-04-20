@@ -1,24 +1,32 @@
-"use strict";
+'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
 
-var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _ = _interopRequire(require("lodash"));
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var Kefir = _interopRequire(require("kefir"));
+var _import = require('lodash');
 
-var createActionSpace = require("./actions").createActionSpace;
+var _import2 = _interopRequireWildcard(_import);
+
+var _Kefir = require('kefir');
+
+var _Kefir2 = _interopRequireWildcard(_Kefir);
+
+var _createActionSpace = require('./actions');
 
 //CONSIDER Object.create and __proto__ may not be universally supported.
 
-var Flux = exports.Flux = (function () {
+var Flux = (function () {
   function Flux(stores, actions) {
     _classCallCheck(this, Flux);
 
-    this.actions = createActionSpace(actions);
+    this.actions = _createActionSpace.createActionSpace(actions);
     this.stores = stores;
     /*
     this.stores = _.reduce(stores, (col, store, key) => {
@@ -30,34 +38,30 @@ var Flux = exports.Flux = (function () {
     this.mount();
   }
 
-  _prototypeProperties(Flux, null, {
-    mount: {
-      value: function mount() {
-        var _this = this;
+  _createClass(Flux, [{
+    key: 'mount',
+    value: function mount() {
+      var _this = this;
 
-        this.actions.mount(this);
-        _.each(this.stores, function (x) {
-          return x.mount(_this);
-        });
-      },
-      writable: true,
-      configurable: true
-    },
-    unmount: {
-      value: function unmount() {
-        this.actions.unmount();
-        _.each(this.stores, function (x) {
-          return x.unmount();
-        });
-      },
-      writable: true,
-      configurable: true
+      this.actions.mount(this);
+      _import2['default'].each(this.stores, function (x) {
+        return x.mount(_this);
+      });
+      _import2['default'].each(this.stores, function (x) {
+        return x.storeDidMount ? x.storeDidMount() : null;
+      });
     }
-  });
+  }, {
+    key: 'unmount',
+    value: function unmount() {
+      this.actions.unmount();
+      _import2['default'].each(this.stores, function (x) {
+        return x.unmount();
+      });
+    }
+  }]);
 
   return Flux;
 })();
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.Flux = Flux;

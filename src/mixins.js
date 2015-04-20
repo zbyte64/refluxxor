@@ -115,3 +115,49 @@ export function ConnectTo(storeName) {
     }
   }, FluxMixin);
 }
+
+/*
+ <FluxComponent sites="sites" loggedIn="user.loggedIn">
+  <SiteList/>
+ </FluxComponent>
+*/
+export var FluxComponent = React.createClass({
+  mixins: [FluxMixin],
+  getInitialState() {
+    var state = {};
+    _.each(this.props, (val, name) => {
+      if(name === "children") return;
+      var storeState = this.getFlux().stores[val].getState();
+      if (storeState && _.isFunction(storeState.toJS)) {
+        storeState = storeState.toJS();
+      }
+      state[name] = storeState;
+    });
+    return state;
+  },
+  componentDidMount() {
+    _.each(this.props, (val, name) => {
+      if(name === "children") return;
+      this.bindTo(this.getFlux().stores[val], storeState => {
+        if (storeState && _.isFunction(storeState.toJS)) {
+          storeState = storeState.toJS();
+        }
+        var state = {};
+        state[name] = storeState;
+        this.setState(state);
+      });
+    });
+  },
+  render() {
+    //clone children with our state as props
+    if (_.isArray(this.props.children)) {
+      return React.DOM.span({},
+        _.map(this.props.children, element => {
+          if (!element) return null;
+          return React.cloneElement(element, this.state);
+        })
+      )
+    }
+    return React.cloneElement(this.props.children, this.state);
+  }
+});
