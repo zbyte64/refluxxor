@@ -63,6 +63,9 @@ var FluxMixin = _import2['default'].merge({
   },
   getActions: function getActions() {
     return this.getFlux().actions;
+  },
+  getStores: function getStores() {
+    return this.getFlux().stores;
   } }, BinderMixin);
 
 exports.FluxMixin = FluxMixin;

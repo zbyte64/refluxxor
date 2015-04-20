@@ -47,6 +47,9 @@ export var FluxMixin = _.merge({
   getActions: function() {
     return this.getFlux().actions;
   },
+  getStores: function() {
+    return this.getFlux().stores;
+  },
 }, BinderMixin);
 
 export function ConnectTo(storeName) {
