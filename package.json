@@ -3,7 +3,14 @@
   "version": "0.0.2",
   "main": "dist/index.js",
   "directories": {
-    "lib": "./src"
+    "lib": "./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zbyte64/refluxxor"
+  },
+  "bugs": {
+    "url": "https://github.com/zbyte64/refluxxor/issues"
   },
   "dependencies": {
     "lodash": "3.6.0",
@@ -17,5 +24,6 @@
     "gulp-mocha": "~2.0.1",
     "expect.js": "~0.3.1",
     "babel": "5.0.9"
-  }
+  },
+  "license": "MIT"
 }
