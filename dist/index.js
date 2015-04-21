@@ -1,26 +1,17 @@
 'use strict';
 
-var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
-
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _actions = require('./actions');
+var _createAction$createActionSpace = require('./actions');
 
-var _actions2 = _interopRequireWildcard(_actions);
+var _Store$AutoBindStore = require('./stores');
 
-var _stores = require('./stores');
+var _Flux = require('./flux');
 
-var _stores2 = _interopRequireWildcard(_stores);
-
-var _flux = require('./flux');
-
-var _flux2 = _interopRequireWildcard(_flux);
-
-var _import = require('lodash');
-
-var _import2 = _interopRequireWildcard(_import);
-
-exports['default'] = _import2['default'].merge({}, _flux2['default'], _stores2['default'], _actions2['default']);
-module.exports = exports['default'];
+exports.createAction = _createAction$createActionSpace.createAction;
+exports.createActionSpace = _createAction$createActionSpace.createActionSpace;
+exports.Store = _Store$AutoBindStore.Store;
+exports.AutoBindStore = _Store$AutoBindStore.AutoBindStore;
+exports.Flux = _Flux.Flux;

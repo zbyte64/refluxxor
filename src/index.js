@@ -1,6 +1,12 @@
-import actions from './actions';
-import stores from './stores';
-import flux from './flux';
-import _ from 'lodash';
+import {createAction, createActionSpace} from './actions';
+import {Store, AutoBindStore} from './stores';
+import {Flux} from './flux';
 
-export default _.merge({}, flux, stores, actions);
+
+export {
+  createAction,
+  createActionSpace,
+  Store,
+  AutoBindStore,
+  Flux
+}
