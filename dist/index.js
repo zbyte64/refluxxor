@@ -22,5 +22,5 @@ var _import = require('lodash');
 
 var _import2 = _interopRequireWildcard(_import);
 
-exports['default'] = _import2['default'].merge({}, _flux2['default'], store, action);
+exports['default'] = _import2['default'].merge({}, _flux2['default'], _stores2['default'], _actions2['default']);
 module.exports = exports['default'];
