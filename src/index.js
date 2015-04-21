@@ -1,5 +1,6 @@
 import {createAction, createActionSpace} from './actions';
 import {Store, AutoBindStore} from './stores';
+import {BinderMixin, FluxMixin, ConnectTo, FluxComponent} from './mixins';
 import {Flux} from './flux';
 
 
@@ -8,5 +9,9 @@ export {
   createActionSpace,
   Store,
   AutoBindStore,
-  Flux
+  Flux,
+  BinderMixin,
+  FluxMixin,
+  ConnectTo,
+  FluxComponent
 }
